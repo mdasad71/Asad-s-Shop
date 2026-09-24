@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Asad's Shop — Fashion Store</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:#f7f7f8;color:#171717}
+header{background:#111;color:#fff;position:sticky;top:0;z-index:5}.bar{max-width:1100px;margin:auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font-size:24px;font-weight:800}.cart{background:#fff;color:#111;border:0;border-radius:999px;padding:10px 15px;font-weight:700;cursor:pointer}
+.hero{background:linear-gradient(135deg,#171717,#3b3b3b);color:#fff;padding:65px 20px}.hero-inner{max-width:1100px;margin:auto}.hero h1{font-size:42px;margin:0 0 10px}.hero p{font-size:18px;color:#ddd}.btn{border:0;border-radius:10px;padding:12px 18px;background:#fff;color:#111;font-weight:700;cursor:pointer}
+main{max-width:1100px;margin:auto;padding:35px 20px}.title{display:flex;justify-content:space-between;align-items:center}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:20px}
+.card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 5px 20px #0000000b}.pic{height:250px;background:linear-gradient(135deg,#ddd,#aaa);display:flex;align-items:center;justify-content:center;font-size:50px}.info{padding:15px}.price{font-size:19px;font-weight:800;margin:8px 0}.add{width:100%;background:#111;color:#fff;border:0;padding:11px;border-radius:9px;cursor:pointer}
+footer{margin-top:40px;background:#111;color:#ddd;padding:35px 20px}.foot{max-width:1100px;margin:auto}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:10;padding:20px}.box{background:#fff;max-width:520px;margin:5vh auto;padding:24px;border-radius:18px;max-height:90vh;overflow:auto}
+input,textarea{width:100%;padding:12px;margin:7px 0 12px;border:1px solid #ddd;border-radius:9px}.close{float:right;border:0;background:#eee;border-radius:50%;width:34px;height:34px;cursor:pointer}
+.item{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
+.small{color:#666;font-size:13px}.pay{background:#e2136e;color:#fff;border:0;width:100%;padding:13px;border-radius:10px;font-weight:800;cursor:pointer}
+@media(max-width:600px){.hero h1{font-size:32px}.pic{height:210px}}
+</style>
+</head>
+<body>
+<header><div class="bar"><div class="logo">Asad's Shop</div><button class="cart" onclick="openCart()">🛒 Cart (<span id="count">0</span>)</button></div></header>
+
+<section class="hero"><div class="hero-inner">
+<h1>আপনার স্টাইল, আমাদের পছন্দ</h1><p>Asad's Shop — আধুনিক জামা-কাপড়, সহজ অর্ডার ও ঢাকা থেকে ডেলিভারি।</p>
+<button class="btn" onclick="document.getElementById('products').scrollIntoView()">শপিং শুরু করুন</button>
+</div></section>
+
+<main id="products">
+<div class="title"><h2>জনপ্রিয় পণ্য</h2><span class="small">নতুন কালেকশন</span></div>
+<div class="grid" id="grid"></div>
+</main>
+
+<footer><div class="foot"><h3>Asad's Shop</h3><p>📍 ঢাকা</p><p>📧 asadullhmd40@gmail.com</p><p>💳 bKash: 01980673540</p><p class="small">© 2026 Asad's Shop. All rights reserved.</p></div></footer>
+
+<div class="modal" id="cartModal"><div class="box">
+<button class="close" onclick="closeCart()">×</button><h2>আপনার Cart</h2><div id="cartItems"></div><h3 id="total"></h3>
+<div id="checkout">
+<h3>অর্ডার তথ্য</h3>
+<input id="name" placeholder="আপনার নাম">
+<input id="phone" placeholder="মোবাইল নম্বর">
+<textarea id="address" placeholder="ডেলিভারি ঠিকানা"></textarea>
+<p class="small">bKash-এ <b>01980673540</b> নম্বরে পেমেন্ট করে Transaction ID নিচের ঘরে দিন।</p>
+<input id="trx" placeholder="bKash Transaction ID">
+<button class="pay" onclick="placeOrder()">অর্ডার কনফার্ম করুন</button>
+</div></div></div>
+
+<script>
+const products=[
+{name:"Premium Black T-Shirt",price:690,emoji:"👕"},
+{name:"Classic White Shirt",price:990,emoji:"👔"},
+{name:"Denim Jacket",price:1590,emoji:"🧥"},
+{name:"Casual Polo",price:790,emoji:"👕"},
+{name:"Oversized T-Shirt",price:750,emoji:"👚"},
+{name:"Men's Panjabi",price:1290,emoji:"🥻"}
+];
+let cart=[];
+const money=n=>"৳"+n.toLocaleString("en-US");
+document.getElementById("grid").innerHTML=products.map((p,i)=>`
+<div class="card"><div class="pic">${p.emoji}</div><div class="info"><b>${p.name}</b><div class="price">${money(p.price)}</div><button class="add" onclick="add(${i})">কার্টে যোগ করুন</button></div></div>`).join("");
+function add(i){cart.push(products[i]);render();openCart()}
+function render(){document.getElementById("count").textContent=cart.length;
+document.getElementById("cartItems").innerHTML=cart.length?cart.map((p,i)=>`<div class="item"><span>${p.name}</span><b>${money(p.price)}</b></div>`).join(""):"<p>Cart খালি।</p>";
+document.getElementById("total").textContent="মোট: "+money(cart.reduce((s,p)=>s+p.price,0))}
+function openCart(){document.getElementById("cartModal").style.display="block";render()}
+function closeCart(){document.getElementById("cartModal").style.display="none"}
+function placeOrder(){
+if(!cart.length)return alert("আগে একটি পণ্য কার্টে যোগ করুন।");
+if(!name.value||!phone.value||!address.value||!trx.value)return alert("নাম, ফোন, ঠিকানা ও Transaction ID দিন।");
+alert("ধন্যবাদ! আপনার অর্ডারের তথ্য গ্রহণ করা হয়েছে।");
+cart=[];render();closeCart();
+}
+render();
+</script>
+</body></html>
